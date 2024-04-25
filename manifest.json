@@ -2,15 +2,20 @@
     "manifest_version": 3,
     "name": "Custom Context Menu",
     "version": "1.1",
-    "permissions": ["activeTab","contextMenus", "scripting","storage"],
+    "permissions": ["activeTab","contextMenus", "scripting","storage","tabs","nativeMessaging"],
     "background": {
       "service_worker": "background.js"
     },
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
-        "js": ["content.js"]
+        "js": ["content.js"],
+        "run_at": "document_start"
       }
+    ],
+    "host_permissions": [
+      "http://*/*",
+      "https://*/*"
     ],
     "action": {
       "default_popup": "menu.html"
