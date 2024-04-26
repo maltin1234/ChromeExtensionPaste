@@ -1,60 +1,63 @@
 document.addEventListener('DOMContentLoaded', function () {
-let todos = JSON.parse(localStorage.getItem('todos')) || [];
-const list = document.getElementById("context-list");
-const form = document.getElementById("context-form");
-const pasteid = document.getElementById("paste-id");
-const content = document.getElementById("content-text")
+  let todos = [];
 
-function renderTodos() {
-  todos.forEach((todo) => {
+  const list = document.getElementById("context-list");
+  const form = document.getElementById("context-form");
+  const pasteid = document.getElementById("paste-id");
+  const content = document.getElementById("content-text");
+
+  function renderTodos() {
+    list.innerHTML = ""; // Clear the list before rendering todos
+    todos.forEach((todo) => {
       renderTodo(todo);
+    });
+  }
+
+  function renderTodo(todo) {
+    const listItem = document.createElement("li");
+    listItem.textContent = `${todo.id} ${todo.text}`;
+    listItem.addEventListener("dblclick", () => removeTodoFromStorage(todo.id));
+    list.appendChild(listItem);
+  }
+
+  function addTodoToStorage(todo) {
+    todos.push(todo);
+    chrome.storage.local.set({ "todos": todos }, () => {
+      console.log("Todo added to storage:", todo);
+      renderTodos(); // Render todos after adding a new one
+    });
+  }
+
+  function removeTodoFromStorage(id) {
+    todos = todos.filter(todo => todo.id !== id);
+    chrome.storage.local.set({ "todos": todos }, () => {
+      console.log("Todo removed from storage:", id);
+      renderTodos(); // Render todos after removing one
+    });
+  }
+
+  // Retrieve todos from chrome storage on DOMContentLoaded
+  chrome.storage.local.get("todos", ({ todos: storedTodos }) => {
+    if (storedTodos) {
+      todos = storedTodos;
+      renderTodos();
+    }
   });
-}
 
-function renderTodo(todo) {
-  list.innerHTML += `
-    <li>
-      ${todo.id}
-      ${todo.text}
-    </li>
-  `;
-}
-function addTodo(todo) {
-  todos.push({
-    id: todo.id,
-    text: todo.text,
-    
-  });
- 
+  // Listen for form submit
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
 
-  // render that todo to the DOM
-  renderTodo(todo);
-}
-// Send a single todo to the background script when a todo item is clicked
+      const todo = {
+        id: pasteid.value,
+        text: content.value,
+      };
 
-function addTodosToStorage(todos) {
-  // Store the todos in chrome storage
-  chrome.storage.local.set({ "todos": todos }, () => {
-    console.log("Todos added to storage:", todos);
-  });
-}
+      addTodoToStorage(todo);
 
-// listen for form to be submitted
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  addTodo({
-    id: pasteid.value,
-    text: content.value,
-  });
-   addTodosToStorage(todos)
-  // reset value of input field
-  pasteid.value = "";
-  content.value = "";
-});
-renderTodos()
-// Sending the object to the background script
-// Function to handle pasting custom text based on todo
-
-
+      pasteid.value = "";
+      content.value = "";
+    });
+  }
 });
