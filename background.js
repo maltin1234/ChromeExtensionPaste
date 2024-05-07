@@ -58,7 +58,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         if (info.menuItemId === todo.id) {
           // Execute the pasteCustomText function in the content script
           chrome.scripting.executeScript({
-            target: { tabId: tab.id },
+            target: { tabId: tab.id , allFrames: true},
             function: pasteCustomText,
             args: [todo.text] // Pass the todo text as an argument
           })
