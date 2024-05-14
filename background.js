@@ -8,7 +8,7 @@ function createContextMenuForTodos(todos) {
     todos.forEach(todo => {
       chrome.contextMenus.create({
         id: todo.id,
-        title: todo.text, // Use todo.text as the title
+        title: todo.id, // Use todo.text as the title
         contexts: ["editable"]
       });
     });

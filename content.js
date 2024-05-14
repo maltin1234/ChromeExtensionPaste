@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function renderTodo(todo) {
     const listItem = document.createElement("li");
-    listItem.textContent = `${todo.id} ${todo.text}`;
+    listItem.classList.add("list-group-item")
+    listItem.textContent = `${todo.id} `;
     listItem.addEventListener("dblclick", () => removeTodoFromStorage(todo.id));
     list.appendChild(listItem);
   }

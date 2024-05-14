@@ -2,6 +2,10 @@
     "manifest_version": 3,
     "name": "Custom Context Menu",
     "version": "1.1",
+    "description": "Context menu using chromes api to be able to paste worknotes",
+    "icons": {
+    "128": "icons/paste.png"
+    },
     "permissions": ["activeTab","contextMenus", "scripting","storage","tabs","nativeMessaging"],
     "background": {
       "service_worker": "background.js"
@@ -12,9 +16,6 @@
         "js": ["content.js"],
         "run_at": "document_start",
         "all_frames": true
-      
-        
-        
       }
     ],
     "host_permissions": [
